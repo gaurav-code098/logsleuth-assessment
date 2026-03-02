@@ -5,34 +5,25 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
-import uvicorn
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from flask import Flask, jsonify
+from flask_cors import CORS
 from app.database import engine, Base
-from app.routes import router
+from app.routes import api_blueprint
 
+# Initialize database tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(
-    title="LogSleuth API",
-    description="AI-powered log anomaly detector",
-    version="1.0.0"
-)
+app = Flask(__name__)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], 
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Enable CORS for the Vercel frontend and local testing
+CORS(app, resources={r"/api/*": {"origins": ["https://logsleuth.vercel.app", "http://localhost:5173"]}}, supports_credentials=True)
 
-app.include_router(router, prefix="/api", tags=["Logs"])
+# Register the routes from routes.py
+app.register_blueprint(api_blueprint, url_prefix="/api")
 
-@app.get("/health", tags=["System"])
+@app.route("/health", methods=["GET"])
 def health_check():
-    return {"status": "healthy", "database": "connected"}
+    return jsonify({"status": "healthy", "database": "connected"}), 200
 
 if __name__ == "__main__":
-    # 2. Tell Uvicorn to treat the parent folder (backend) as the root directory
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True, app_dir=parent_dir)
+    app.run(host="0.0.0.0", port=8000, debug=True)
