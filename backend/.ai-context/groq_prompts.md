@@ -3,7 +3,7 @@
 The following configurations and prompts are used in `app/services/groq_service.py` to enforce strict, predictable outputs from the Llama-3 model.
 
 ### 1. Model Configuration
-* **Model:** `llama3-8b-8192` (Selected for ultra-fast LPU inference to prevent HTTP timeouts).
+* **Model:** `llama-3.3-70b-versatile` (Selected for ultra-fast LPU inference to prevent HTTP timeouts).
 * **Temperature:** `0.1` (Highly deterministic, preventing creative deviation from the JSON schema).
 * **Response Format:** `{"type": "json_object"}` (Forces the model to output valid JSON natively).
 
