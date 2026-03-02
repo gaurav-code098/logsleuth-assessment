@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+// In your api.js file
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
 // --- SESSION MANAGEMENT ---
 // Check if they already have an ID, if not, generate a new random one
@@ -20,11 +21,13 @@ const axiosInstance = axios.create({
 
 export const logApi = {
     getLogs: async () => {
-        const response = await axiosInstance.get('/logs');
+        
+        const response = await axiosInstance.get('/api/logs'); 
         return response.data;
     },
     submitLog: async (rawLog) => {
-        const response = await axiosInstance.post('/logs', {
+       
+        const response = await axiosInstance.post('/api/logs', { 
             raw_log: rawLog
         });
         return response.data;
