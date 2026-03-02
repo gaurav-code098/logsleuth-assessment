@@ -21,11 +21,13 @@ const axiosInstance = axios.create({
 
 export const logApi = {
     getLogs: async () => {
-        const response = await axiosInstance.get('/logs');
+        
+        const response = await axiosInstance.get('/api/logs'); 
         return response.data;
     },
     submitLog: async (rawLog) => {
-        const response = await axiosInstance.post('/logs', {
+       
+        const response = await axiosInstance.post('/api/logs', { 
             raw_log: rawLog
         });
         return response.data;
