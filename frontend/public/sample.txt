@@ -1,0 +1,256 @@
+---LOG_START id=001 type="rfc5424-syslog"---
+<134>1 2026-02-28T03:12:07.123Z app-server-01 myapp 1245 - - ERROR [auth.module] Failed to validate JWT token: signature verification failed, user_id=null, token_id=8d4f1a2a. Trace=AuthService.verifyToken() -> JWTLibrary:SignatureException
+<134>1 2026-02-28T03:12:09.879Z app-server-01 kernel 0 - - CRIT [kernel] CPU: 3 PID: 1872 Comm: worker_5 Not tainted 5.10.0-rc1 #1 Call Trace: dump_stack+0x54/0x80 show_stack+0x54/0x70 panic+0x1f0/0x2c0 <0> BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+<134>1 2026-02-28T03:13:00.000Z db-primary postgres 2234 - - ERROR [postgres.c] terminating connection due to administrator command; connection=0x7f5c9a200, session=client=10.10.20.45:53788
+<134>1 2026-02-28T03:13:01.654Z db-primary postgres 2234 - - ERROR [postgres.lock] deadlock detected: processes 2342 and 2411 involved. DETERMINE: SQL: update orders set status='processing' where id=...; detail: Process 2342 waits for ShareLock on transaction 12345; blocked by process 2411.
+<134>1 2026-02-28T03:14:12.451Z lb-prod haproxy 4123 - - ALERT [haproxy.frontend] 192.0.2.12:54221 [28/Feb/2026:03:14:12.451] frontend/backend/server -1/- -1/- - - CONNECT error: TLS handshake failed: certificate verify failed (certificate has expired)
+---LOG_END---
+
+---LOG_START id=002 type="systemd-journal"---
+Mar 01 09:46:02 kube-node-03 systemd[1]: Starting Containerd Container Runtime...
+Mar 01 09:46:03 kube-node-03 containerd[1002]: time="2026-03-01T09:46:03.123456789Z" level=error msg="failed to create task" error="OCI runtime create failed: runc create failed: exit status 1: container_linux.go:367: starting container process caused: process_linux.go:495: container init caused: write /proc/sys/fs/inotify/max_user_watches: invalid argument: unknown"
+Mar 01 09:46:05 kube-node-03 systemd[1]: containerd.service: Main process exited, code=exited, status=1/FAILURE
+Mar 01 09:46:05 kube-node-03 systemd[1]: containerd.service: Failed with result 'exit-code'.
+Mar 01 09:46:05 kube-node-03 systemd[1]: Failed to start Containerd Container Runtime.
+---LOG_END---
+
+---LOG_START id=003 type="kernel-dmesg"---
+[  620.112345] Out of memory: Kill process 4152 (java) score 145 or sacrifice child
+[  620.112361] Killed process 4152 (java) total-vm:1587344kB, anon-rss:842120kB, file-rss:0kB, shmem-rss:0kB
+[  620.112539] kernel: CPU0: Temperature above threshold, cpu clock throttled (total events = 178)
+[  622.803221] raid5: discovered faulty disk sdb, md0 degraded, initiating rebuild
+[  624.993000] md/raid: md0: recovery of RAID5 failed: too many errors on disk sdb (I/O error)
+[  625.003112] sd 8:0:0:0: [sdb] Unhandled sense code
+[  625.003127] sd 8:0:0:0: [sdb] Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[  625.003130] sd 8:0:0:0: [sdb] Sense Key : Medium Error [current]
+[  625.003131] sd 8:0:0:0: [sdb] Add. Sense: Unrecovered read error - auto reallocate failed
+[  625.003150] EXT4-fs (md0): warning: mounting fs with errors, running e2fsck is recommended
+[  625.112233] panic: kernel panic - not syncing: Attempted to kill init!
+---LOG_END---
+
+---LOG_START id=004 type="java-stacktrace"---
+2026-02-27 22:17:43.512 ERROR 1 --- [nio-8080-exec-99] o.a.c.c.C.[.[.[/api] : Servlet.service() for servlet [dispatcherServlet] threw exception
+java.lang.NullPointerException: Cannot invoke "com.company.service.OrderService.process(Order)" because "orderService" is null
+    at com.company.api.OrderController.placeOrder(OrderController.java:78) ~[app.jar:1.3.5]
+    at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+    at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:?]
+    at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205) ~[spring-web-5.3.21.jar:5.3.21]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'orderController': Unsatisfied dependency expressed through field 'orderService'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'orderService'...
+... 42 more
+2026-02-27 22:17:43.595 ERROR 1 --- [nio-8080-exec-99] o.a.c.c.C.[.[.[/api] : Nested exception is java.lang.IllegalStateException: Failed to execute CommandLineRunner
+---LOG_END---
+
+---LOG_START id=005 type="python-traceback"---
+[2026-02-25 18:03:17,451: ERROR/MainProcess] Task web.tasks.generate_report[ef6c6b3d-9b2e-4f3f-b2a9] raised unexpected: KeyError('invoice_id')
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.9/site-packages/celery/app/trace.py", line 451, in trace_task
+    R = retval = fun(*args, **kwargs)
+  File "/srv/app/web/tasks.py", line 132, in generate_report
+    invoice = Invoice.objects.get(pk=payload['invoice_id'])
+KeyError: 'invoice_id'
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.9/site-packages/django/db/models/query.py", line 678, in get
+    raise self.model.DoesNotExist("%s matching query does not exist." % self.model._meta.object_name)
+django.core.exceptions.ObjectDoesNotExist: Invoice matching query does not exist.
+---LOG_END---
+
+---LOG_START id=006 type="nodejs-unhandled"---
+2026-02-28T12:22:03.982Z app-node-02 node[2712]: (node:2712) UnhandledPromiseRejectionWarning: Error: connect ECONNREFUSED 10.20.30.5:5432
+    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1159:16)
+2026-02-28T12:22:03.983Z app-node-02 node[2712]: (node:2712) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block...
+2026-02-28T12:50:11.223Z app-node-02 node[2712]: Heap used 1.5GB, RSS 2.6GB, External 0.4GB - Suspected memory leak: retaining buffer pool after request surge
+---LOG_END---
+
+---LOG_START id=007 type="nginx-access-error"---
+198.51.100.10 - - [28/Feb/2026:07:34:11 +0000] "GET /api/v1/customer/123/profile HTTP/1.1" 200 542 "-" "curl/7.79.1"
+198.51.100.11 - - [28/Feb/2026:07:35:11 +0000] "POST /api/v1/checkout HTTP/1.1" 502 574 "-" "Mozilla/5.0 (compatible)"
+2026/02/28 07:35:11 [error] 14572#14572: *2917 upstream prematurely closed connection while reading response header from upstream, client: 198.51.100.11, server: api.prod.example.com, request: "POST /api/v1/checkout HTTP/1.1", upstream: "http://10.0.2.23:8080/api/v1/checkout", host: "api.prod.example.com"
+---LOG_END---
+
+---LOG_START id=008 type="apache-core-dump"---
+10.0.1.121 - - [28/Feb/2026:09:10:12 +0000] "GET /static/js/app.bundle.js HTTP/1.1" 200 115682 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+[core dumped] /usr/sbin/httpd(12345): segfault at 0 ip 00007f9c2a1ef9b2 sp 00007ffef8c7a3f0 error 4 in libphp.so[7f9c2a1e0000+21000]
+---LOG_END---
+
+---LOG_START id=009 type="haproxy-storm"---
+Mar 01 04:00:00 lb-prod haproxy[4123]: 192.0.2.22:42311 [01/Mar/2026:04:00:00.123] frontend/backend/server 0/2003/0 502 364 - - ---- 8/8/0/1/0 0/0 "POST /v2/events HTTP/1.1"
+Mar 01 04:00:00 lb-prod haproxy[4123]: WARNING: 2000 connections in queue, server backend overloaded, server app-03 is down for maintenance
+Mar 01 04:00:00 lb-prod haproxy[4123]: CRITICAL: health check failed for server app-03, status code 503
+---LOG_END---
+
+---LOG_START id=010 type="k8s-oom-pod"---
+Events:
+  Type     Reason       Age   From               Message
+  ----     ------       ----  ----               -------
+  Warning  FailedMount  4m    kubelet, kube-node-03  Unable to attach or mount volumes: unmounted volumes=[data], unattached volumes=[data,default-token-...]: timed out waiting for the condition
+  Normal   Scheduled    3m    default-scheduler     Successfully assigned default/worker-7 to kube-node-03
+  Warning  BackOff      2m    kubelet, kube-node-03  Back-off restarting failed container
+Pod log:
+2026-03-01 09:47:15,812 ERROR worker: OutOfMemoryError: Java heap space
+Mar 01 09:47:17 +0000 app container[1]: Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+Mar 01 09:47:17 +0000 app container[1]:     at java.base/java.util.HashMap.resize(HashMap.java:686)
+Mar 01 09:47:17 +0000 app container[1]:     at com.company.proc.DataAggregator.aggregate(DataAggregator.java:320)
+Mar 01 09:47:17 +0000 app container[1]: Container did not exit cleanly: exit code 137
+Mar 01 09:47:18 +0000 kubelet: Pod default/worker-7 is OOMKilled.
+---LOG_END---
+
+---LOG_START id=011 type="docker-pull-auth"---
+time="2026-02-27T02:12:09Z" level=error msg="failed to pull image \"registry.internal.example.com/prod/app:latest\": unauthorized: authentication required"
+time="2026-02-27T02:12:09Z" level=error msg="Attempting next endpoint for pull after error: unauthorized: authentication required"
+---LOG_END---
+
+---LOG_START id=012 type="windows-event"---
+EventID 7031 Source: Service Control Manager
+The MyService service terminated unexpectedly. It has done this 3 time(s). The following corrective action will be taken in 60000 milliseconds: Restart the service.
+EventID 1000 Source: Application Error
+Faulting application name: Explorer.exe, version: 10.0.19041.1, time stamp: 0x9f9f3b12 Faulting module name: ntdll.dll, version: 10.0.19041.789, fault address: 0x00007ffb3c2d1b3c
+---LOG_END---
+
+---LOG_START id=013 type="firewall-ids"---
+Feb 28 21:23:11 firewall-fw01 kernel: nf_conntrack: table full, dropping packet.
+Feb 28 21:23:11 firewall-fw01 snort[4021]: [**] [1:2010937:1] ET SCAN Potential SSH Scan [**] {TCP} 203.0.113.45:39821 -> 10.0.0.12:22
+Feb 28 21:23:11 firewall-fw01 kernel: conntrack: dropped conntrack entry
+---LOG_END---
+
+---LOG_START id=014 type="dns-bind"---
+Mar 01 06:02:05 dns-01 named[1823]: client 10.10.20.130#34622: query (cache) 'api.prod.example.com/IN' denied
+Mar 01 06:02:06 dns-01 named[1823]: client 192.0.2.37#51234: error (SERVFAIL) resolving 'upstream.example.net/A': 192.0.2.100#53
+---LOG_END---
+
+---LOG_START id=015 type="mysql-innodb"---
+2026-02-26T11:14:03.679485Z 0 [Note] InnoDB: Starting crash recovery.
+2026-02-26T11:14:05.894123Z 0 [ERROR] InnoDB: Page checksum mismatch: page 12345, space 5, page_no 122, old_checksum 0x3f12fc, new 0x4a8ab9
+2026-02-26T11:14:06.001903Z 0 [ERROR] Plugin 'InnoDB' init function returned error.
+2026-02-26T11:14:06.002300Z 0 [ERROR] mysqld: Can't initialize InnoDB storage engine
+2026-02-26T11:14:07.000000Z 0 [Warning] Changed limits: max_connections: 1000 -> 50 due to OOM limiting
+2026-02-26T11:14:07.444Z 0 [Warning] Slave SQL for channel '': Error 'Got fatal error 123 from master when reading data from binary log: '...' (relay_log_pos 0)'
+---LOG_END---
+
+---LOG_START id=016 type="postgres-replication"---
+2026-02-28 23:55:11 UTC [4567-1] LOG:  database system was interrupted; last known up at 2026-02-28 23:50:00 UTC
+2026-02-28 23:55:12 UTC [4567-2] FATAL:  could not open relation with OID 123456: No such file or directory
+2026-02-28 23:56:30 UTC [7891-3] ERROR:  canceling statement due to statement timeout
+2026-02-28 23:56:30 UTC [7891-4] DETAIL:  failed process was running: SELECT count(*) FROM huge_table WHERE updated_at > now() - interval '1 day';
+---LOG_END---
+
+---LOG_START id=017 type="mongodb-journal"---
+2026-02-24T18:41:02.123+00:00 rs0-primary mongod[2345]: E STORAGE  [initandlisten] WiredTiger error (-31804) [164x] WT_VERIFY_CHECKPOINT: Verification failed for checkpoint ###
+2026-02-24T18:41:02.125+00:00 rs0-primary mongod[2345]: E STORAGE  [initandlisten] Reason: WiredTiger journal verification failed; Repair required.
+---LOG_END---
+
+---LOG_START id=018 type="redis-eviction"---
+[2026-02-20 14:03:07.332] # Redis is now ready to accept connections on port 6379
+[2026-02-20 14:04:45.111] * DB saved on disk
+[2026-02-27 10:23:11.223] 1:M 27 Feb 10:23:11.223 # WARNING overcommit_memory is set to 1! Background save may fail under low memory conditions.
+[2026-02-27 10:23:11.224] 1:M 27 Feb 10:23:11.224 # RDB memory usage 1.2GB > maxmemory (512MB) - forking may fail.
+[2026-02-27 10:23:12.777] 1:M 27 Feb 10:23:12.777 # Error trying to save the DB on disk: RDB can't save in background: fork: Cannot allocate memory
+[2026-02-27 10:23:13.129] 1:M 27 Feb 10:23:13.129 # WARNING: All keys were evicted (vital cache eviction storm) due to memory pressure.
+---LOG_END---
+
+---LOG_START id=019 type="kafka-zookeeper"---
+[2026-02-22 02:11:01,456] ERROR [KafkaServer id=2] ReplicationFetchManager - fetch for partition test-topic-4 failed with error OffsetOutOfRangeException
+[2026-02-22 02:11:03,223] WARN [Controller id=1] on becoming -> offline partition test-topic-4: replica app-03 has been offline for 60000 ms
+[2026-02-22 02:11:05,999] ERROR [Controller id=1] Fatal: Could not elect preferred leader for partition test-topic-4
+[2026-02-22 02:11:07,123] ERROR [ZooKeeperClient] Connection to zookeeper1:2181 lost: java.net.SocketTimeoutException: Read timed out
+---LOG_END---
+
+---LOG_START id=020 type="es-corrupt-index"---
+[2026-02-19T11:23:22,345][WARN ][o.e.c.r.a.AllocationService] [es-node-03] delayed allocation of replica for index logs-2026.02: cluster health = YELLOW -> reason: "shard failures"
+[2026-02-19T11:23:27,999][ERROR][o.e.i.IndexShard] [es-node-03] [logs-2026.02][0] CorruptIndexException[checksum mismatch on segment_2; expected=0x1a2f4b got=0xdeadbeef]
+[2026-02-19T11:23:28,002][WARN ][o.e.c.r.a.DiskThresholdMonitor] [es-node-03] high disk watermark [85%] exceeded on *; shard relocating will be paused
+---LOG_END---
+
+---LOG_START id=021 type="logstash-pipeline"---
+[2026-02-18T07:11:09,001][ERROR][logstash.inputs.redis ] Redis connection error: ERR max number of clients reached
+[2026-02-18T07:11:09,002][ERROR][logstash.pipeline        ] Pipeline aborted due to error. Worker crashed. Stacktrace:
+org.logstash.common.io.WriteException: Failed to write to output
+    at org.logstash.outputs.elasticsearch.ElasticsearchWriter.write(ElasticsearchWriter.java:89)
+Caused by: Failed to flush bulk: [index logs-2026.02] failed to put mapping
+---LOG_END---
+
+---LOG_START id=022 type="backup-failure"---
+2026-02-25 02:00:01 CRON[12345]: Starting backup: daily-full
+2026-02-25 02:00:31 backup[12345]: ERROR: /dev/sdf is not mounted or not found.
+2026-02-25 02:00:32 backup[12345]: Restic failed: repository is locked by PID 9876 (stale lock?) -> aborting backup.
+2026-02-25 02:01:00 backup[12345]: AWS EBS snapshot failed: InvalidVolume.NotFound: The volume 'vol-0abc1234' does not exist.
+---LOG_END---
+
+---LOG_START id=023 type="s3-access-denied"---
+HTTP/1.1 403 Forbidden
+x-amz-request-id: 3F4B2D9A
+x-amz-id-2: xyz==
+Date: Thu, 27 Feb 2026 05:12:09 GMT
+Content-Length: 0
+<?xml version="1.0" encoding="UTF-8"?>
+<Error>
+  <Code>AccessDenied</Code>
+  <Message>Access Denied</Message>
+  <BucketName>prod-logs-archive</BucketName>
+  <RequestId>3F4B2D9A</RequestId>
+  <HostId>abc/xyz</HostId>
+</Error>
+---LOG_END---
+
+---LOG_START id=024 type="smtp-queue"---
+Mar 01 10:12:11 postfix/smtp[5478]: connect to mail.example.net[198.51.100.77]:25: Connection timed out
+Mar 01 10:12:11 postfix/qmgr[2890]: warning: mail_queue: 10000 messages in queue; oldest: 3d 04:12:05
+---LOG_END---
+
+---LOG_START id=025 type="ldap-auth-fail"---
+Feb 28 17:22:11 ldap01 slapd[2344]: conn=5421 fd=23 ACCEPT from IP=203.0.113.99:51234 (IP=203.0.113.99)
+Feb 28 17:22:12 ldap01 slapd[2344]: conn=5421 op=1 BIND dn="uid=admin,ou=People,dc=example,dc=com" method=128 failed (49) invalid credentials - uid=admin
+Feb 28 17:22:12 ipa-server sshd[9923]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty= ruser= rhost=203.0.113.99
+---LOG_END---
+
+---LOG_START id=026 type="cron-flap"---
+Mar 01 02:00:00 cron[7123]: (root) CMD (/usr/local/bin/daily-maintenance.sh >> /var/log/maintenance.log 2>&1)
+Mar 01 02:00:01 daily-maintenance.sh[7134]: ERROR: /opt/app/db_migration.sql: syntax error at line 312 near "ALTER TABLE" - migration aborted.
+Mar 01 02:00:01 cron[7134]: (root) MAIL (bailed out) 1000 bytes missing
+---LOG_END---
+
+---LOG_START id=027 type="api-500-json"---
+{"timestamp":"2026-03-01T11:00:00Z","requestId":"req-9f8a7b","status":500,"error":"InternalServerError","message":"Upstream service timeout","path":"/v1/payments/execute","details":{"upstream":"payments-service","latency_ms":30000,"retry_count":3}}
+---LOG_END---
+
+---LOG_START id=028 type="tls-certificate"---
+Mar 01 08:00:00 lb-prod openssl[2150]: 140735190755456:error:14090086:SSL routines:ssl3_get_server_certificate:certificate verify failed:/usr/local/ssl/crypto/ssl/s3_clnt.c:1263:certificate has expired
+Mar 01 08:00:01 client-app[4521]: TLS handshake error: Peer certificate cannot be authenticated with known CA certificates.
+---LOG_END---
+
+---LOG_START id=029 type="ntp-drift"---
+Mar 01 03:15:00 ntp-01 chronyd[1201]: System clock wrong by 1205.123456 seconds, refusing large adjustment
+Mar 01 03:15:05 ntp-01 chronyd[1201]: Failed to step clock: operation not permitted (chrony requires elevated privileges)
+---LOG_END---
+
+---LOG_START id=030 type="split-brain"---
+Feb 27 22:33:15 pacemaker corosync[345]: Node 'db-replica-02' cannot join the cluster: stonith timeout exceeded
+Feb 27 22:33:15 pacemaker corosync[345]: Quorum lost: cluster has 1/3 nodes online, remaining nodes will stop resources.
+Feb 27 22:33:17 pacemaker[1200]: Resource mysql stopped due to failed quorum.
+---LOG_END---
+
+---LOG_START id=031 type="db-deadlock"---
+2026-02-26 14:12:45,601 WARN  [Thread-101] com.company.db.ConnectionPool - maxWait exceeded; threads waiting: 42; poolSize=100 active=100 idle=0; stack dump...
+2026-02-26 14:12:45,602 ERROR [Thread-102] com.company.service.OrderProcessing - Transaction rollback due to SQLDeadlockDetected: deadlock found when trying to get lock; try restarting transaction
+---LOG_END---
+
+---LOG_START id=032 type="rabbitmq-backlog"---
+=WARNING REPORT==== 28-Feb-2026::09:22:33 ===
+closing AMQP connection <0.1234.0> (10.0.0.12:41533 -> 10.0.0.51:5672):
+client unexpectedly closed TCP connection
+2026-02-28 09:22:35.112 [error] <0.2345.0> Supervisor {rabbit_limiter_sup,1} had child {rabbit_limiter,2} started with rabbit_limiter:start_link() at <0.5678.0> exit with reason {error,{{shutdown,{failed_to_start_child,rate_limiter,{error,{resource_exhausted,'queue memory limit reached'}}}},{{shutdown,failed_to_start_child},rabbit_limiter_sup}}}
+---LOG_END---
+
+---LOG_START id=033 type="vault-unseal"---
+2026-02-25T05:00:01.112Z vault[2211]: core: failed to unseal: sealed=true, error: storage backend unreachable, last connection attempt failed with EOF
+2026-02-25T05:00:02.000Z vault[2211]: core: Raft leadership lost, retrying bootstrap - cannot guarantee unseal.
+---LOG_END---
+
+---LOG_START id=034 type="hardware-ups"---
+2026-02-15 04:12:33 UPS-MONITOR: UPS dev: /dev/sg1 reported battery low: 9% remaining - Initiating graceful shutdown of non-essential services.
+2026-02-15 04:12:37 pdu[800]: power_feed: input2 lost - switching to bypass; output voltage sag detected
+---LOG_END---
+
+---LOG_START id=035 type="fraud-detection"---
+2026-02-20T16:12:11.335Z fraud-detector service[2045]: WARN: Unusually high velocity for user 9223: 273 failed logins in 5 minutes — possible credential stuffing; marking IP 203.0.113.99 for throttling.
+---LOG_END---
