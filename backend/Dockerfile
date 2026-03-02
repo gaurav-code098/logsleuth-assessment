@@ -25,9 +25,7 @@ ENV HOME=/home/user \
 # Copy the rest of the application code
 COPY --chown=user . /code
 
-# Expose the port (Hugging Face expects port 7860 by default)
 EXPOSE 7860
 
-# Command to run the application
-# We map port 7860 and use app.main:app
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
+#
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:7860", "app.main:app"]
